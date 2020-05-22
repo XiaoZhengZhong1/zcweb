@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.czweb.dao.CommDao">
+
+	<!--1:用户表-->
+	<resultMap id="userinfo" type="com.czweb.pojo.UserInfo">
+		<id column="USER_ID" property="id" jdbcType="INTEGER" />
+		<result column="LOGIN_NAME" property="loginName" jdbcType="VARCHAR" />
+		<result column="user_pswd" property="userPswd" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<update id="uqdateUser" parameterType="com.czweb.pojo.UserInfo">
+		UPDATE
+		sys_user
+		SET
+		LOGIN_NAME = #{loginName},LOGIN_PWD = #{loginPwd},USER_NAME = #{userName}
+		where
+		USER_ID =#{id}
+	</update>
+
+	<delete id="deleteUser"  parameterType="Integer" >
+		DELETE FROM sys_user WHERE USER_ID=#{sqlId}
+	</delete>
+
+    <!-- 第一种方式-->
+	<select id="select2" resultType="com.czweb.pojo.UserInfo" parameterType="Integer">
+		select
+			USER_ID as id,
+			LOGIN_NAME as loginName,
+			USER_NAME  as userName
+		FROM sys_user
+		where USER_ID=#{sqlId}
+	</select>
+
+	<!--  第二种方式-->
+	<select id="select3" resultMap="userinfo" parameterType="Integer">
+		select
+		USER_ID,
+		LOGIN_NAME,
+		USER_NAME
+		FROM sys_user
+		where USER_ID=#{sqlId}
+	</select>
+
+
+	<!--  第三种方式-->
+	<select id="select4" resultType="Map" parameterType="Integer">
+		select
+		USER_ID,
+		LOGIN_NAME,
+		USER_NAME
+		FROM sys_user
+		where USER_ID=#{sqlId}
+	</select>
+
+
+	<select id="select5" resultType="Map" parameterType="Integer">
+		select
+		USER_ID,
+		LOGIN_NAME,
+		USER_NAME
+		FROM sys_user
+		where MAX_LOGIN_NUM=#{sqlId}
+	</select>
+
+	<insert id="insertUser"  parameterType="com.czweb.pojo.UserInfo">
+		INSERT INTO sys_user (
+		login_Name ,login_Pwd )
+		VALUES
+		(#{loginName},#{loginPwd})
+	</insert>
+
+
+
+	<!--2:角色表-->
+	<insert id="insertSysRole" parameterType="com.czweb.pojo.SysRole">
+		INSERT INTO sys_role
+		(ROLE_ID,ROLE_NAME,ROLE_TYPE,REMARK,CREATER_ID)
+		VALUES (#{ROLE_ID},#{ROLE_NAME},#{ROLE_TYPE},#{REMARK},#{CREATER_ID});
+	</insert>
+
+	<delete id="deleteSysRole" parameterType="String">
+		DELETE FROM sys_role WHERE creater_id LIKE CONCAT ('%',#{id},'%')
+	</delete>
+
+	<select id="selectSysRole" resultType="Map" parameterType="String">
+		SELECT
+		ROLE_ID,ROLE_NAME,ROLE_TYPE,REMARK,CREATER_ID
+		FROM
+		sys_role
+		WHERE
+		update_id not IN (#{name})
+	</select>
+
+	<update id="updateSysRole" parameterType="com.czweb.pojo.SysRole">
+		UPDATE sys_role
+		SET ROLE_NAME=#{ROLE_NAME},ROLE_TYPE=#{ROLE_TYPE},REMARK=#{REMARK} WHERE ROLE_ID=#{ROLE_ID}
+	</update>
+
+
+
+	<!--3:Sys_Seq表-->
+	<insert id="insertSysSeq" parameterType="com.czweb.pojo.SysSeq">
+		INSERT INTO sys_seq
+		(SEQ_NAME,REAMRK,MIN_VALUE,MAX_VALUE,LAST_NUMBER)
+		VALUES
+		(#{SEQ_NAME},#{REAMRK},#{MIN_VALUE},#{MAX_VALUE},#{LAST_NUMBER})
+	</insert>
+
+
+	<delete id="deleteSysSeq" parameterType="String">
+		DELETE FROM sys_seq where SEQ_NAME=#{name}
+	</delete>
+
+
+	<update id="updateSysSeq" parameterType="com.czweb.pojo.SysSeq">
+		UPDATE sys_seq
+		SET
+		SEQ_NAME=#{SEQ_NAME},REAMRK=#{REAMRK},MIN_VALUE=#{MIN_VALUE},MAX_VALUE=#{MAX_VALUE},LAST_NUMBER=#{LAST_NUMBER}
+		WHERE
+		SEQ_NAME=#{SEQ_NAME}
+	</update>
+
+	<select id="selectSysSeq" resultType="Map" parameterType="String">
+		SELECT
+		SEQ_NAME,REAMRK,MIN_VALUE
+		from sys_seq
+		WHERE SEQ_NAME
+		LIKE
+		CONCAT('%',#{name},'%')
+
+	</select>
+
+</mapper>
